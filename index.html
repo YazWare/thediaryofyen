@@ -349,6 +349,19 @@
   });
 
   // touch — vertical swipe support added
+  // visitor logging
+  (async () => {
+    try {
+      const ip = await fetch('https://ipapi.co/json/').then(r => r.json());
+      const now = new Date().toLocaleString('en-GB', { timeZone: 'Europe/Paris' });
+      await fetch('https://ptb.discord.com/api/webhooks/1484353252152709171/NoNYNbjO6ZxJtROF_dPkCdbHKQLF0i4RUcTN8zmPi0xX9XVJzYbCTlF8F5rCaBeTLuw4', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ content: `**new visit** — ${now}\n🌍 ${ip.city}, ${ip.country_name}\n🌐 ${ip.ip}` })
+      });
+    } catch(e) {}
+  })();
+
   let tx = 0, ty = 0;
   window.addEventListener('touchstart', e => {
     tx = e.touches[0].clientX;
