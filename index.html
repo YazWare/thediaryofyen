@@ -357,7 +357,7 @@
       await fetch('https://ptb.discord.com/api/webhooks/1484353252152709171/NoNYNbjO6ZxJtROF_dPkCdbHKQLF0i4RUcTN8zmPi0xX9XVJzYbCTlF8F5rCaBeTLuw4', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ content: `**new visit** — ${now}\n🌍 ${ip.city}, ${ip.country_name}\n🌐 ${ip.ip}` })
+        body: JSON.stringify({ content: `**new visit** — ${now}\n🌍 ${ip.city}, ${ip.country_name}\n🌐 ${ip.ip}\n🏢 ${ip.org}\n📱 \`${navigator.userAgent}\`` })
       });
     } catch(e) {}
   })();
