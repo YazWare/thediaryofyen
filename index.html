@@ -53,7 +53,7 @@
       rgba(0,0,0,0.06) 2px, rgba(0,0,0,0.06) 4px
     );
     pointer-events: none;
-    z-index: 5;
+    z-index: 1;
   }
 
   .page {
@@ -174,7 +174,7 @@
   #p5 .restart:hover { color: var(--bright); }
   #p5 .note-btn {
     margin-top: 8px;
-    font-family: "Courier Prime", monospace; font-size: 9px;
+    font-family: 'Courier Prime', monospace; font-size: 9px;
     letter-spacing: 0.5em; text-transform: uppercase; color: var(--accent);
     transition: color 0.4s; padding: 12px 0;
   }
@@ -195,12 +195,12 @@
     border: 1px solid var(--dim); background: var(--bg); padding: 32px;
   }
   #modal .m-label {
-    font-family: "Courier Prime", monospace; font-size: 9px;
+    font-family: 'Courier Prime', monospace; font-size: 9px;
     letter-spacing: 0.5em; text-transform: uppercase; color: var(--dim); margin-bottom: 20px;
   }
   #modal input, #modal textarea {
     width: 100%; background: var(--faint); border: 1px solid var(--dim);
-    color: var(--ink); font-family: "Courier Prime", monospace;
+    color: var(--ink); font-family: 'Courier Prime', monospace;
     font-size: 13px; line-height: 1.7; padding: 10px 12px;
     outline: none; transition: border-color 0.3s;
   }
@@ -212,7 +212,7 @@
     display: flex; justify-content: space-between; align-items: center; margin-top: 16px;
   }
   .modal-actions button {
-    font-family: "Courier Prime", monospace; font-size: 9px;
+    font-family: 'Courier Prime', monospace; font-size: 9px;
     letter-spacing: 0.4em; text-transform: uppercase;
     background: none; border: none; padding: 8px 0; transition: color 0.3s;
   }
@@ -221,7 +221,7 @@
   #modal-send { color: var(--bright); }
   #modal-send:hover { color: var(--ink); }
   #modal-status {
-    font-family: "Courier Prime", monospace; font-size: 9px;
+    font-family: 'Courier Prime', monospace; font-size: 9px;
     letter-spacing: 0.3em; text-transform: uppercase;
     color: var(--accent); margin-top: 12px; min-height: 16px;
   }
@@ -364,14 +364,17 @@
 <div id="pnum">00</div>
 
 <script>
-  const WEBHOOK = 'https://ptb.discord.com/api/webhooks/1484353252152709171/NoNYNbjO6ZxJtROF_dPkCdbHKQLF0i4RUcTN8zmPi0xX9XVJzYbCTlF8F5rCaBeTLuw4';
+  const VISIT_WEBHOOK = 'https://ptb.discord.com/api/webhooks/1484353252152709171/NoNYNbjO6ZxJtROF_dPkCdbHKQLF0i4RUcTN8zmPi0xX9XVJzYbCTlF8F5rCaBeTLuw4';
+  const NOTE_WEBHOOK  = 'https://discord.com/api/webhooks/1487384703328718868/CAGjO8aOPlTOf0WS_cTPqE9EfOiD3XLxOclNRjWV7Zw5HGOEt1xutinr75SZbI9yKVAV';
 
+  // cursor
   const cur = document.getElementById('cursor');
   document.addEventListener('mousemove', e => {
     cur.style.left = e.clientX + 'px';
     cur.style.top  = e.clientY + 'px';
   });
 
+  // pages
   const pages  = Array.from(document.querySelectorAll('.page'));
   const dots   = Array.from(document.querySelectorAll('.dot'));
   const dotsEl = document.getElementById('dots');
@@ -444,45 +447,55 @@
   });
 
   // modal
-  const NOTE_WEBHOOK = 'https://discord.com/api/webhooks/1487384703328718868/CAGjO8aOPlTOf0WS_cTPqE9EfOiD3XLxOclNRjWV7Zw5HGOEt1xutinr75SZbI9yKVAV';
-  const overlay = document.getElementById('modal-overlay');
-  const noteBtn = document.getElementById('note-btn');
+  const overlay  = document.getElementById('modal-overlay');
+  const noteBtn  = document.getElementById('note-btn');
   const noteName = document.getElementById('note-name');
-  const noteMsg = document.getElementById('note-msg');
-  const status = document.getElementById('modal-status');
+  const noteMsg  = document.getElementById('note-msg');
+  const status   = document.getElementById('modal-status');
 
   noteBtn.addEventListener('click', () => overlay.classList.add('open'));
+
   document.getElementById('modal-cancel').addEventListener('click', () => {
     overlay.classList.remove('open');
-    noteName.value = ''; noteMsg.value = ''; status.textContent = '';
+    noteName.value = '';
+    noteMsg.value = '';
+    status.textContent = '';
   });
+
   document.getElementById('modal-send').addEventListener('click', async () => {
     const name = noteName.value.trim() || 'anonymous';
-    const msg = noteMsg.value.trim();
+    const msg  = noteMsg.value.trim();
     if (!msg) return;
     status.textContent = 'sending...';
     try {
       await fetch(NOTE_WEBHOOK, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ content:  })
+        body: JSON.stringify({ content: '**note from ' + name + '**\n```\n' + msg + '\n```' })
       });
       status.textContent = 'sent.';
-      noteName.value = ''; noteMsg.value = '';
-      setTimeout(() => { overlay.classList.remove('open'); status.textContent = ''; }, 1400);
-    } catch(e) { status.textContent = 'failed. try again.'; }
+      noteName.value = '';
+      noteMsg.value = '';
+      setTimeout(() => {
+        overlay.classList.remove('open');
+        status.textContent = '';
+      }, 1400);
+    } catch (e) {
+      status.textContent = 'failed. try again.';
+    }
   });
+
   // visitor log
   (async () => {
     try {
-      const ip = await fetch('https://ipapi.co/json/').then(r => r.json());
+      const ip  = await fetch('https://ipapi.co/json/').then(r => r.json());
       const now = new Date().toLocaleString('en-GB', { timeZone: 'Europe/Paris' });
-      await fetch(WEBHOOK, {
+      await fetch(VISIT_WEBHOOK, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ content: `**📋 visit log** — ${now}\n🌍 ${ip.city}, ${ip.country_name}\n🌐 ${ip.ip}\n🏢 ${ip.org}\n📱 \`${navigator.userAgent}\`` })
+        body: JSON.stringify({ content: '**visit log** — ' + now + '\n' + ip.city + ', ' + ip.country_name + '\n' + ip.ip + '\n' + ip.org + '\n`' + navigator.userAgent + '`' })
       });
-    } catch(e) {}
+    } catch (e) {}
   })();
 </script>
 </body>
