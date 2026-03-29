@@ -13,10 +13,10 @@
   :root {
     --bg:     #100c09;
     --ink:    #d4c8b8;
-    --dim:    #4a3828;
+    --dim:    #7a6555;
     --faint:  #1e1610;
-    --accent: #7a5c42;
-    --bright: #b89070;
+    --accent: #a07858;
+    --bright: #d4aa88;
   }
 
   html, body {
@@ -256,6 +256,21 @@
   }
   #pnum.show { opacity: 1; }
 
+  /* arrows */
+  #arrows {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+    display: flex; gap: 24px; z-index: 100;
+    opacity: 0; transition: opacity 0.6s;
+  }
+  #arrows.show { opacity: 1; }
+  .arrow {
+    font-family: 'Courier Prime', monospace; font-size: 14px;
+    color: var(--dim); transition: color 0.3s;
+    padding: 8px 4px; user-select: none;
+  }
+  .arrow:hover { color: var(--bright); }
+  .arrow.disabled { opacity: 0.2; pointer-events: none; }
+
   @keyframes up {
     from { opacity: 0; transform: translateY(10px); }
     to   { opacity: 1; transform: translateY(0); }
@@ -352,14 +367,19 @@
   </div>
 </div>
 
+<div id="arrows">
+  <span class="arrow" id="arr-prev">←</span>
+  <span class="arrow" id="arr-next">→</span>
+</div>
+
 <div id="dots">
   <div class="dot on" data-i="0"></div>
   <div class="dot" data-i="1"></div>
   <div class="dot" data-i="2"></div>
   <div class="dot" data-i="3"></div>
   <div class="dot" data-i="4"></div>
+  <div class="dot" data-i="5"></div>
 </div>
-<div id="hint">swipe to navigate</div>
 <div id="pnum">00</div>
 
 <script>
@@ -377,10 +397,13 @@
   const pages  = Array.from(document.querySelectorAll('.page'));
   const dots   = Array.from(document.querySelectorAll('.dot'));
   const dotsEl = document.getElementById('dots');
-  const hint   = document.getElementById('hint');
   const pnum   = document.getElementById('pnum');
   const total  = pages.length;
   let idx = 0, locked = false;
+
+  const arrowsEl = document.getElementById('arrows');
+  const arrPrev  = document.getElementById('arr-prev');
+  const arrNext  = document.getElementById('arr-next');
 
   function pad(n) { return String(n).padStart(2, '0'); }
 
@@ -395,22 +418,31 @@
     pages[idx].classList.add('active');
     dots[idx].classList.add('on');
     pnum.textContent = pad(idx);
-    hint.classList.toggle('show', idx > 0 && idx < total - 1);
+    if (arrowsEl.classList.contains('show')) updateArrows();
     setTimeout(() => locked = false, 1200);
   }
 
   document.getElementById('enter-btn').addEventListener('click', () => {
     dotsEl.classList.add('show');
     pnum.classList.add('show');
-    hint.classList.add('show');
+    arrowsEl.classList.add('show');
+    updateArrows();
     go(1);
   });
 
   document.getElementById('restart-btn').addEventListener('click', () => {
-    hint.classList.remove('show');
     pnum.classList.remove('show');
     go(0);
   });
+
+
+  function updateArrows() {
+    arrPrev.classList.toggle('disabled', idx === 1);
+    arrNext.classList.toggle('disabled', idx === total - 1);
+  }
+
+  arrPrev.addEventListener('click', () => go(idx - 1));
+  arrNext.addEventListener('click', () => go(idx + 1));
 
   dots.forEach(d => d.addEventListener('click', () => go(+d.dataset.i)));
 
@@ -425,7 +457,8 @@
     if (idx === 0) {
       dotsEl.classList.add('show');
       pnum.classList.add('show');
-      hint.classList.add('show');
+      arrowsEl.classList.add('show');
+      updateArrows();
       go(1); return;
     }
     if (['ArrowRight','ArrowDown'].includes(e.key)) go(idx + 1);
