@@ -154,31 +154,40 @@
   #p4 .text em { font-style: normal; font-weight: 700; color: var(--accent); }
 
   /* PAGE 5 */
-  #p5 { flex-direction: column; }
-  #p5 .line1 {
+  #p5 { justify-content: flex-start; align-items: center; }
+  #p5 .inner { max-width: 480px; width: 100%; }
+  #p5 .text {
+    font-size: clamp(20px, 5.5vw, 34px);
+    font-weight: 400; line-height: 1.65; letter-spacing: -0.01em; color: var(--ink);
+  }
+  #p5 .text em { font-style: normal; font-weight: 700; color: var(--accent); }
+
+  /* PAGE 6 */
+  #p6 { flex-direction: column; }
+  #p6 .line1 {
     font-family: 'Courier Prime', monospace;
     font-size: clamp(10px, 2.5vw, 13px);
     letter-spacing: 0.4em; text-transform: uppercase; color: var(--dim); margin-bottom: 24px;
   }
-  #p5 .line2 {
+  #p6 .line2 {
     font-size: clamp(26px, 8vw, 52px);
     font-weight: 700; letter-spacing: -0.03em;
     line-height: 1.15; text-align: center; color: var(--ink);
   }
-  #p5 .restart {
+  #p6 .restart {
     margin-top: 48px;
     font-family: 'Courier Prime', monospace; font-size: 9px;
     letter-spacing: 0.5em; text-transform: uppercase; color: var(--dim);
     transition: color 0.4s; padding: 12px 0;
   }
-  #p5 .restart:hover { color: var(--bright); }
-  #p5 .note-btn {
+  #p6 .restart:hover { color: var(--bright); }
+  #p6 .note-btn {
     margin-top: 8px;
     font-family: 'Courier Prime', monospace; font-size: 9px;
     letter-spacing: 0.5em; text-transform: uppercase; color: var(--accent);
     transition: color 0.4s; padding: 12px 0;
   }
-  #p5 .note-btn:hover { color: var(--bright); }
+  #p6 .note-btn:hover { color: var(--bright); }
 
   /* modal */
   #modal-overlay {
@@ -348,6 +357,19 @@
 
 <!-- 5 -->
 <div class="page" id="p5">
+  <div class="inner">
+    <div class="label">0x5 / dreaming</div>
+    <div class="text">
+      waking up<br>
+      after dreaming of you<br>
+      feels like losing you<br>
+      <em>all over again</em>
+    </div>
+  </div>
+</div>
+
+<!-- 6 -->
+<div class="page" id="p6">
   <div class="line1">yen's archive</div>
   <div class="line2">❤︎ ❤︎ ❤︎</div>
   <div class="restart" id="restart-btn">↩ return to beginning</div>
@@ -379,6 +401,7 @@
   <div class="dot" data-i="3"></div>
   <div class="dot" data-i="4"></div>
   <div class="dot" data-i="5"></div>
+  <div class="dot" data-i="6"></div>
 </div>
 <div id="pnum">00</div>
 
